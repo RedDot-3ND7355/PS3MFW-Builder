@@ -1,0 +1,243 @@
+
+/==============================================================\
+|  .------.  .-------. .-----.   ..  .-.   .--------.      .--.|
+| /_____   \/   _____//_____  \ /  \/   \ /_   _____/\    /   /|
+|  /   ____/\____  \  __(__  < /         \ /   __)\   \/\/   / |
+| /   /     /       \/        \   /\/\    Y   /    \        /  |
+|/___/     /________/_________/__/    \___|__/      \__/\__/   |
+|http://ps3hax.net/ http://psxhax.net/ PS3MFW 4.xx tasks v1.0.0|
+\==============================================================/
+
+/-----------------------------------\
+|Build:0.3.0.0 Tasks, Fix & clean-up|
+\-----------------------------------/
+
+Updated patterns of many tasks for 4.7x!
+
+Fixed the first time use errors [Missing files issue].
+
+Made PS3MFW Builder more lightweight.
+
+
+/-----------------------------------\
+|Build:0.1.1.1 Tasks, Fix & clean-up|
+\-----------------------------------/
+
+Did HUGE task cleanup... now the GUI loads faster :)
+
+Fixed many messed up tasks and did sum good clean up ;)
+
+
+/---------------------------\
+|1.0.0 Tasks, did a clean-up|
+\---------------------------/
+
+Updated task to their full potential!
+
+Now launching official 1.0!
+
+/---------------------------\
+|0.3.1 Tasks, did a clean-up|
+\---------------------------/
+
+<DID XTRA UPDATES ON THE LDR FOR LV0!>
+
+Aiight now We had updated the tasks again for 4.50!
+
+Did sum touch up's again...
+
+Did a touch up on the tasks! ;)
+
+Updates on base are done!
+
+Final Update on the task's! If more task is added then other python users added their owns...
+
+Added our "patch_lv0" task! (And added habib's patterns)
+
+Added ElmerFudd's "patch_cos"!
+
+Added RazorX's following Created/Modified tasks 
+-"homebrew_category(modified)" 
+-"add_pkg_file(created)"
+-"jailbait(modified)" 
+-"rename_category(created)" 
+-"spoof_version_more(modified)"
+-"change_xml_files_adv(created)" 
+-"change_xml_files(created)" 
+-"spoof_version(created)" 
+-"spoof_version_manual(created)"
+-"change_rco_files_adv(created)"
+-"change_rco_files(created)"
+
+Added Arachetous Modifications into the "666_990_spoof_version"!
+
+Added Habib's patterns into a created task named "patch_lv0"! <-- Epic task!
+
+[August, 21, 2013]
+Added Habib's patterns into a created task named "patch_blind"!
+
+[August, 20, 2013]
+Added Habib's patterns into "patch_uns"!
+
+Added Habib's patterns into "patch_nas"!
+
+Added New task named "patch_token"!
+
+Fixed Lv2 peek&poke patterns in "Patch_LV2"!
+
+Added Lv2 peek&poke into "Patch_LV2"!
+
+Added New task named "patch_spp"!
+
+Updated "Patch_All" Due to update on "Patch_LV2"!
+
+[August, 17, 2013]
+Moved "Patch_All" to BACKUP folder for people who wants to still use it instead of doing seperative tasks!
+
+Removed "Patch_LV1Checks" because it was useless and repetetive tasks!
+
+Removed "Modify_Version" because it was useless and repetetive tasks!
+
+Made sum tasks and changed title simplified for n00bs ;)
+
+[Old times]
+Several new tasks has been added by RedDot-3ND7355 and B7U3 C50SS :D
+
+U can get the updates of them on the git! All features marked 4.xx are for 4.4x :P 
+
+Right here! http://gitorious.ps3dev.net/mfw-tasks-custom/mfw-tasks-custom/trees/master
+
+/-----------\
+|0.2.1 Tasks|
+\-----------/
+
+- patch_privacy.tcl – PS3 collects a large amount of personal information while it’s operating. Additionally personal information is sent to many domain names when internet access is enabled (unrelated to PSN access). This task prevents PS3 from sending any data to the domain names you select.
+
+- broken_bluray.tcl – Allows you to remove Blu-Ray firmware installation so that the MFW can be installed without a working Blu-Ray drive. This is potentially dangerous if used on a PS3 with a working drive, and should only be used if the drive is broken.
+
+- spoof_version.tcl – Allows changing the firmware version the PS3 appears to be on, similar to the rebug spoofer.
+
+- change_coldboot_files.tcl – Advanced users only: Allows changing the sound played and image shown during the boot process. Caution: If improper files are used, this can cause a “brick”.
+
+- change_ssl_cer.tcl – Allows changing of SSL certificates.
+
+- change_theme.tcl – Can be used to replace the default "Airbrush" theme with another theme file (.p3t format).
+
+- patch_shop.tcl – Creates firmware to transform demo PS3s (the units used in stores) into full retail PS3s, without the need for service mode!
+
+/---------\
+|0.1 Tasks|
+\---------/
+
+tasks/patch_category_game.tcl    
+Add new icons to the XMB Game category
+Modifies dev_flash/vsh/resource/explore/xmb/category_game.xml file
+
+ --patch-package-files : Add "Install Package Files" icon to the XMB Game Category
+ --patch-app-home : Add "/app_home" icon to the XMB Game Category
+
+
+tasks/patch_lv1.tcl
+Patch LV1 hypervisor
+Modifies CORE OS lv1.self
+
+ --patch-lv1-mmap : Allow mapping of any memory area (Needed for LV2 Poke)
+
+
+tasks/patch_lv2.tcl
+Patch LV2 kernel
+Modifies CORE OS lv1.self
+
+ --patch-lv2-peek-poke : Patch to add Peek&Poke system calls to LV2
+
+
+tasks/patch_nas_plugin.tcl
+Patch package installer
+Modifies dev_flash/vsh/module/nas_plugin.sprx
+
+ --allow-debug-pkg : Patch to allow installation of debug packages
+ --allow-pseudoretail-pkg : Patch to allow installation of pseudo-retail packages
+
+
+tasks/patch_vsh.tcl
+Patch Application launcher
+Modifies dev_flash/vsh/module/vsh.self
+ --allow-unsigned-app : Patch to allow running of unsigned applications
+
+
+tasks/add_license_msg.tcl
+Modifies PUP license.xml
+Add a custom message to the 'New Features' installation screen
+ --license-auto-add-features : Automatically generate the enabled features of PS3MFW
+ --license-features-message : Prefix message to the generated features list
+ --license-message : New Features message (Appears after the license agreement)
+
+
+tasks/clean_friends.tcl
+Clean unwanted icons from the XMB Friends Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_friends.xml file
+ --clean-friends-avcroom : Remove "Video Chat" icon from the XMB Friends Category
+ --clean-friends-chat : Remove "Chat Room" icon from the XMB Friends Category
+ --clean-friends-message-box : Remove "Message Box" icon from the XMB Friends Category
+ --clean-friends-nas : Remove "My Profile" icon from the XMB Friends Category
+ --clean-friends-new-chat : Remove "New Chat" icon from the XMB Friends Category
+
+
+tasks/clean_game.tcl
+Clean unwanted icons from the XMB Game Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_game.xml file
+ --clean-game-gamedata : Remove "Game Data" icon from the XMB Game Category
+ --clean-game-mcutility : Remove "Memory Card Utility (PS/PS2)" icon from the XMB Game Category
+ --clean-game-minis-manual : Remove "Minis Manual" icon from the XMB Game Category
+ --clean-game-sdps3 : Remove "Saved Data Utility (PS3)" icon from the XMB Game Category
+ --clean-game-sdpsp : Remove "Saved Data Utility (minis)" icon from the XMB Game Category
+ --clean-game-trophy : Remove "Trophy Collection" icon from the XMB Game Category
+ --clean-game-welcome : Remove "PlayStation Store" icon from the XMB Game Category
+
+
+tasks/clean_music.tcl
+Clean unwanted icons from the XMB Music Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_music.xml file
+ --clean-music-dlna-device : Remove "Network Media Servers" icon from the XMB Music Category
+ --clean-music-dlna-scan : Remove "Search for Media Servers" icon from the XMB Music Category
+ --clean-music-welcome : Remove "PlayStation Store" icon from the XMB Music Category
+
+
+tasks/clean_network.tcl
+Clean unwanted icons from the XMB Network Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_network.xml file
+ --clean-network-browser : Remove "Internet Browser" icon from the XMB Network Category
+ --clean-network-folding-at-home : Remove "Life with PlayStation" icon from the XMB Network Category
+ --clean-network-kensaku : Remove "Internet Search" icon from the XMB Network Category
+ --clean-network-manual : Remove "Online Instruction Manuals" icon from the XMB Network Category
+ --clean-network-premo : Remove "Remote Play" icon from the XMB Network Category
+
+
+tasks/clean_photo.tcl
+Clean unwanted icons from the XMB Photo Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_photo.xml file
+ --clean-photo-dlna-device : Remove "Network Media Servers" icon from the XMB Photo Category
+ --clean-photo-dlna-scan : Remove "Search for Media Servers" icon from the XMB Photo Category
+ --clean-photo-hakoniwa : Remove "Photo Gallery" icon from the XMB Photo Category
+ --clean-photo-screenshot : Remove "Screenshot" icon from the XMB Photo Category
+
+
+tasks/clean_psn.tcl
+Clean unwanted icons from the XMB PlayStation Network Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_psn.xml file
+ --clean-psn-commerce-new : Remove "What's New" icon from the XMB PlayStation Network Category
+ --clean-psn-home : Remove "PlayStation Home" icon from the XMB PlayStation Network Category
+ --clean-psn-regist : Remove "Sign In" icon from the XMB PlayStation Network Category
+ --clean-psn-welcome : Remove "PlayStation Store" icon from the XMB PlayStation Network Category
+
+
+tasks/clean_video.tcl
+Clean unwanted icons from the XMB Video Category
+Modifies dev_flash/vsh/resource/explore/xmb/category_video.xml file
+ --clean-video-bddata-mgmt : Remove "BD Data Utility" icon from the XMB Video Category
+ --clean-video-dlna-device : Remove "Network Media Servers" icon from the XMB Video Category
+ --clean-video-dlna-scan : Remove "Search for Media Servers" icon from the XMB Video Category
+ --clean-video-editingvideo-mgmt : Remove "Video Editor & Uploader" icon from the XMB Video Category
+ --clean-video-netflix : Remove "Netflix" icon from the XMB Video Category
+ --clean-video-welcome : Remove "PlayStation Store" icon from the XMB Video Category
+

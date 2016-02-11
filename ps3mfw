@@ -1,0 +1,363 @@
+#!/usr/bin/env tclsh8.5
+#
+# ps3mfw -- PS3 MFW creator
+#
+# Copyright (C) Anonymous Developers (Code Monkeys)
+#
+# This software is distributed under the terms of the GNU General Public
+# License ("GPL") version 3, as published by the Free Software Foundation.
+#
+
+set ::PS3MFW_VERSION "1.0.0"
+
+# Option --debug: Show verbose debugging information
+# Option --task-verbose: Show verbose task outputs
+# Option --tool-debug: Enable tool debug mode
+# Option --silent: Disable log output
+# Option --no-sha1-check: Disable SHA1 Check on Input PUP
+## Option --add-sha1: Add SHA1 off Input PUP to DB
+# Option --build-dir: Build directory for temporary files
+# Option --gui: Launch the Graphical User Interface
+# Option --new-routine: Use old routines [Causes errors on some fw]
+
+array set ::options {
+	--debug true
+	--task-verbose false	
+    --tool-debug false	
+	--silent false
+	--no-sha1-check false
+	--gui true
+	--new-routine false
+}
+## this is an hidden developer option
+## line 16, 239, 240, 241 remove the #
+## copy the code part among into the empty line above of ' array set ::options { '
+## --add-sha1 true
+
+#
+# End of configuration section.
+#
+
+set ::SCETOOL2 "scetool2"
+set ::PKGTOOL "pkgtool"
+set ::CMD "cmd"
+set ::TARFIX "fixtar"
+set ::PUP "pup"
+set ::PUPPACK "puppack"
+set ::PUPUNPACK "pupunpack"
+set ::COSPKG "cospkg"
+set ::COSUNPKG "cosunpkg"
+set ::PKG "pkg"
+set ::NEWPKG "new_pkg"
+set ::SPKG "spkg"
+set ::UNPKG "new_unpkg"
+set ::UNSELF "unself"
+set ::UNSELFNEW "unself2"
+set ::SCETOOL "scetool"
+set ::fciv "fciv"
+set ::MAKESELF "self_rebuilder"
+set ::RCOMAGE "rcomage"
+set ::UNSPP "unspp"
+set ::SPP "spp"
+set ::LV0TOOL "lv0tool"
+set ::NEWCFW "3.60"
+set ::OFW_2NDGEN_BASE "3.56"
+set ::NEWMFW_VER "000"
+set ::SHCHK "true"
+set ::SHADD "false"
+set ::SELF ""
+set ::SUF ""
+set ::CFW 0
+set ::OFW_MAJOR_VER 0
+set ::OFW_MINOR_VER 0
+set ::FLAG_PATCH_FILE_MULTI 0
+set ::FLAG_NO_LV1LDR_CRYPT ""
+set ::FLAG_COREOS_UNPACKED 0
+set ::FLAG_4xx_LV0_UNPACKED 0
+set ::OLDROUTINE "0"
+set ::a "3.41"
+set ::b "3.55"
+set ::c "4.30"
+set ::d "4.31"
+set ::APPSELF "dev_flash/vsh/module/vsh.self dev_flash/vsh/module/explore_category_game.sprx dev_flash/vsh/module/explore_plugin.sprx dev_flash/vsh/module/netconf_plugin.sprx dev_flash/vsh/module/sysconf_plugin.sprx dev_flash/vsh/module/libad_core.sprx dev_flash/vsh/module/libmedi.sprx dev_flash/vsh/module/libsysutil_np_clans.sprx dev_flash/vsh/module/libsysutil_np_commerce2.sprx dev_flash/vsh/module/libsysutil_np_util.sprx dev_flash/vsh/module/autodownload_plugin.sprx dev_flash/vsh/module/download_plugin.sprx dev_flash/vsh/module/esehttp.sprx dev_flash/vsh/module/eula_cddb_plugin.sprx dev_flash/vsh/module/eula_hcopy_plugin.sprx dev_flash/vsh/module/eula_net_plugin.sprx dev_flash/vsh/module/explore_category_friend.sprx dev_flash/vsh/module/explore_category_music.sprx dev_flash/vsh/module/explore_category_network.sprx dev_flash/vsh/module/explore_category_photo.sprx dev_flash/vsh/module/explore_category_psn.sprx dev_flash/vsh/module/explore_category_sysconf.sprx dev_flash/vsh/module/explore_category_tv.sprx dev_flash/vsh/module/explore_category_user.sprx dev_flash/vsh/module/explore_category_video.sprx dev_flash/vsh/module/explore_plugin_ft.sprx dev_flash/vsh/module/explore_plugin_np.sprx dev_flash/vsh/module/friendtrophy_plugin.sprx dev_flash/vsh/module/game_ext_plugin.sprx dev_flash/vsh/module/hknw_plugin.sprx dev_flash/vsh/module/nas_plugin.sprx dev_flash/vsh/module/newstore_plugin.sprx dev_flash/vsh/module/np_eula_plugin.sprx dev_flash/vsh/module/np_trophy_plugin.sprx dev_flash/vsh/module/np_trophy_util.sprx dev_flash/vsh/module/photo_network_sharing_plugin.sprx dev_flash/vsh/module/profile_plugin.sprx dev_flash/vsh/module/regcam_plugin.sprx dev_flash/vsh/module/sysconf_plugin.sprx dev_flash/vsh/module/videoeditor_plugin.sprx dev_flash/vsh/module/videoplayer_plugin.sprx dev_flash/vsh/module/videoplayer_util.sprx dev_flash/vsh/module/vsh.self dev_flash/vsh/module/x3_mdimp11.sprx x3_mdimp7.sprx dev_flash/vsh/module/netconf_plugin.sprx dev_flash/vsh/module/sysconf_plugin.sprx dev_flash/vsh/module/eula_net_plugin.sprx dev_flash/vsh/module/mintx_client.sprx dev_flash/vsh/module/videodownloader_plugin.sprx"
+
+if {$::options(--new-routine)} {
+set ::OLDROUTINE "1"
+} else {
+set ::OLDROUTINE "0"
+}
+
+## ----------------------------------------------------- ##
+## initialize all 'setup' variables initially, 
+## so we don't blow up upon failure to read in errors
+
+set ::PS3MFW_DIR ""
+set ::program ""
+set ::auto_path ""
+set ::xmlang ""
+
+set ::env(PS3_KEYS) ""
+set ::BUILD_DIR ""
+set ::IN_DIR ""
+set ::IN_FILE ""
+set ::OUT_DIR ""
+set ::OUT_FILE ""
+
+## ----------------------------------------------------- ##
+
+set ::PS3MFW_DIR [file dirname [info script]]
+set ::TASKS_DIR [file join ${::PS3MFW_DIR} tasks]
+set ::program [file tail [info script]]
+
+while {[catch {file readlink [file join ${::PS3MFW_DIR} ${::program}]} program] == 0} {
+	if {[file pathtype ${::program}] == "absolute"} {
+		set ::PS3MFW_DIR [file dirname ${::program}]
+	} else {
+		set ::PS3MFW_DIR [file join ${::PS3MFW_DIR} [file dirname ${::program}]]
+	}
+
+	set ::program [file tail ${::program}]
+}
+
+set ::auto_path [linsert ${::auto_path} 0 ${::PS3MFW_DIR}]
+if { $::tcl_platform(platform) == "windows"} {
+	append ::env(PATH) ";[file nativename [file join ${::PS3MFW_DIR} tools]]"
+} else {
+	append ::env(PATH) ":[file join ${::PS3MFW_DIR} tools]"
+}
+
+source [file join ${::PS3MFW_DIR} xml.tcl]
+source [file join ${::PS3MFW_DIR} tar.tcl]
+source [file join ${::PS3MFW_DIR} ps3mfw_base.tcl]
+source [file join ${::PS3MFW_DIR} ps3mfw_tasks.tcl]
+
+
+## --------------------------------------------------------- ##
+## ----- setup the vars from the 'settings.xml' ------------ ##
+##															 ##
+## --- 'USE the current 'script' directory as the base dir   ##
+## ---  for the root directory of all 'settings' options     ##
+## ---  (just append any settings to the current script dir  ##
+
+set ::xmlang [::xml::LoadFile [file join $::PS3MFW_DIR Settings.xml]]
+set ::xmlang [::xml::LoadFile [file join $::PS3MFW_DIR Settings.xml]]
+if {[file exists [::xml::GetData ${::xmlang} "Settings:PS3_KEYS" 0]]} {
+
+	set ::env(PS3_KEYS) [file join ${::PS3MFW_DIR} [::xml::GetData ${::xmlang} "Settings:PS3_KEYS" 0]]		
+	set ::BUILD_DIR [file join ${::PS3MFW_DIR} [::xml::GetData ${::xmlang} "Settings:BUILD_DIR" 0]]		
+	set ::IN_DIR [file join ${::PS3MFW_DIR} [::xml::GetData ${::xmlang} "Settings:IN_DIR" 0]]
+	set ::IN_FILE [file join ${::IN_DIR} [::xml::GetData ${::xmlang} "Settings:IN_FILE" 0]]	
+	set ::OUT_DIR [file join ${::PS3MFW_DIR} [::xml::GetData ${::xmlang} "Settings:OUT_DIR" 0]]
+	set ::OUT_FILE [file join ${::OUT_DIR} [::xml::GetData ${::xmlang} "Settings:OUT_FILE" 0]]		
+	if {[catch {file mkdir ${::BUILD_DIR}}]} {
+		error "error creating build directory:${::BUILD_DIR}"
+	}
+	if {[catch {file mkdir ${::IN_DIR}}]} {
+		error "error creating in directory:${::IN_DIR}"
+	}
+	if {[catch {file mkdir ${::OUT_DIR}}]} {
+		error "error creating output directory:${::OUT_DIR}"
+	}
+} else {
+	set ::env(PS3_KEYS) "[file join ${::PS3MFW_DIR} .ps3/data]"
+}
+
+## 															 ##
+## --------------------------------------------------------- ##
+## --------------------------------------------------------- ##
+
+set ::taskfiles [get_sorted_task_files]
+set ::tasks [list]
+set ::taskname ""
+set ::arguments [list]
+set ::current_opt ""
+set ::current_task_opt ""
+
+# ---------------------------------------
+# go and read in each task .tcl file
+# ---------------------------------------
+foreach taskfile ${::taskfiles} {
+	source ${::taskfile}
+}
+
+foreach arg ${::argv} {
+	if {${::current_opt} != ""} {
+		if {![string match "--*" ${::arg}]} {
+			set ::options(${::current_opt}) ${::arg}
+			set ::current_opt ""
+		} else {
+			usage "Invalid option: ${::arg}, expected value.\n"
+		}
+	} elseif {${::current_task_opt} != ""} {
+		if {![string match "--*" ${::arg}]} {
+			set ::${::taskname}::options(${::current_task_opt}) ${::arg}
+			set ::current_task_opt ""
+		} else {
+			usage "Invalid option: ${::arg}, expected value.\n"
+		}
+	} else {
+		if {[string match "--*" ${::arg}]} {
+			if {[info exists ::options(${::arg})]} {
+				set ::current_opt ${::arg}
+			} else {
+				set ::task [string map {- _} [string range ${::arg} 2 end]]
+				if {[namespace exists ${::task}]} {
+					lappend tasks "${::task}"
+					set ::taskname ${::task}
+				} elseif {[info exists ::${::taskname}::options(${::arg})]} {
+					set ::current_task_opt ${::arg}
+				} else {
+					usage "Invalid option: ${::arg}, expected task.\n"
+				}
+			}
+		} else {
+			lappend arguments ${::arg}
+		}
+	}
+}
+
+if {${::current_opt} != ""} {
+	usage "Option ${::current_opt} needs a value\n"
+} elseif {${::current_task_opt} != ""} {
+	usage "Option ${::current_task_opt} needs a value\n"
+}
+
+if {[llength ${::tasks}] == 0 } {
+	set ::tasks [list welcome_msg]
+	foreach task ${::tasks} {
+		source [file join ${::TASKS_DIR} ${::task}.tcl]
+	}
+}
+
+#### ----------------------------------------------------------------------------- ####
+####		**** SETUP ALL THE MAIN VARIABLES FOR MFW CREATION ****				   ####
+#### ----------------------------------------------------------------------------- ####
+
+set tmpdir [pwd]
+if {[file exists "/tmp"]} {set tmpdir "/tmp"}
+catch {set tmpdir $::env(TRASH_FOLDER)} ;# very old Macintosh. Mac OS X doesn't have this.
+catch {set tmpdir $::env(TMP)}
+catch {set tmpdir $::env(TEMP)}
+set ::BUILD_DIR "[file join $tmpdir PS3MFW]"
+set ::ORIGINAL_PUP_DIR [file join ${::BUILD_DIR} PS3MFW-OFW]
+set ::CUSTOM_PUP_DIR [file join ${::BUILD_DIR} PS3MFW-MFW]
+set ::LOG_FILE [file join ${::BUILD_DIR} "[file rootname [file tail ${::argv0}]].log"]
+
+
+#### ----------------------------------------------------------------------------- ####
+####             **** 3.0.0 FIXED APP STARTUP FILES INEXISTANT ****	               ####
+#### ----------------------------------------------------------------------------- ####
+
+# Check if dir exists [FIX]
+if {[file exists ${::BUILD_DIR}] == 0 } {
+   file mkdir ${::BUILD_DIR}
+}
+
+# Check if the log file exists [FIX]
+if {[file exists ${::LOG_FILE}] == 0 } { 
+   catch {exec > ${::LOG_FILE}}
+}
+
+# ORIGINAL (OFW) base files
+set ::ORIGINAL_VERSION_TXT [file join ${::ORIGINAL_PUP_DIR} version.txt]
+set ::ORIGINAL_LICENSE_XML [file join ${::ORIGINAL_PUP_DIR} license.xml]
+set ::ORIGINAL_PROMO_FLAGS_TXT [file join ${::ORIGINAL_PUP_DIR} promo_flags.txt]
+set ::ORIGINAL_UPDATE_FLAGS_TXT [file join ${::ORIGINAL_PUP_DIR} update_flags.txt]
+set ::ORIGINAL_PS3SWU_SELF [file join ${::ORIGINAL_PUP_DIR} ps3swu.self]
+set ::ORIGINAL_PS3SWU2_SELF [file join ${::ORIGINAL_PUP_DIR} ps3swu2.self]
+set ::ORIGINAL_SPKG_TAR [file join ${::ORIGINAL_PUP_DIR} spkg_hdr.tar]
+set ::ORIGINAL_UPDATE_TAR [file join ${::ORIGINAL_PUP_DIR} update_files.tar]
+set ::ORIGINAL_SPKG_DIR [file join ${::ORIGINAL_PUP_DIR} spkg_hdr]
+set ::ORIGINAL_UPDATE_DIR [file join ${::ORIGINAL_PUP_DIR} update_files]
+set ::ORIGINAL_PKG_DIR [file join ${::ORIGINAL_UPDATE_DIR} CORE_OS_PACKAGE.pkg]
+set ::ORIGINAL_UNPKG_DIR [file join ${::ORIGINAL_UPDATE_DIR} CORE_OS_PACKAGE.unpkg]
+set ::ORIGINAL_COSUNPKG_DIR [file join ${::ORIGINAL_UPDATE_DIR} CORE_OS_PACKAGE]
+
+# update (MFW) base files
+set ::CUSTOM_VERSION_TXT [file join ${::CUSTOM_PUP_DIR} version.txt]
+set ::CUSTOM_LICENSE_XML [file join ${::CUSTOM_PUP_DIR} license.xml]
+set ::CUSTOM_PROMO_FLAGS_TXT [file join ${::CUSTOM_PUP_DIR} promo_flags.txt]
+set ::CUSTOM_UPDATE_FLAGS_TXT [file join ${::CUSTOM_PUP_DIR} update_flags.txt]
+set ::CUSTOM_PS3SWU_SELF [file join ${::CUSTOM_PUP_DIR} ps3swu.self]
+set ::CUSTOM_PS3SWU2_SELF [file join ${::CUSTOM_PUP_DIR} ps3swu2.self]
+set ::CUSTOM_SPKG_TAR [file join ${::CUSTOM_PUP_DIR} spkg_hdr.tar]
+set ::CUSTOM_UPDATE_TAR [file join ${::CUSTOM_PUP_DIR} update_files.tar]
+set ::CUSTOM_SPKG_DIR [file join ${::CUSTOM_PUP_DIR} spkg_hdr]
+set ::CUSTOM_UPDATE_DIR [file join ${::CUSTOM_PUP_DIR} update_files]
+set ::CUSTOM_PKG_DIR [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.pkg]
+set ::CUSTOM_UNPKG_DIR [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE.unpkg]
+set ::CUSTOM_COSUNPKG_DIR [file join ${::CUSTOM_UPDATE_DIR} CORE_OS_PACKAGE]
+
+# update_files.tar pkg files (OFW & MFW)
+set ::CUSTOM_DEVFLASH_DIR [file join ${::CUSTOM_UPDATE_DIR} dev_flash]
+set ::ORIGINAL_DEVFLASH_DIR [file join ${::ORIGINAL_UPDATE_DIR} dev_flash]
+set ::CUSTOM_UPLXML_DIR [file join ${::CUSTOM_UPDATE_DIR} UPL.xml]
+
+# custom dirs
+set ::CUSTOM_TEMPLAT_DIR [file join ${::PS3MFW_DIR} templat]
+set ::CUSTOM_IMG_DIR [file join ${::CUSTOM_TEMPLAT_DIR} imgs]
+set ::CUSTOM_TEMPLAT_RAF [file join ${::CUSTOM_TEMPLAT_DIR} coldboot_raf]
+set ::CUSTOM_TEMPLAT_AC3 [file join ${::CUSTOM_TEMPLAT_DIR} coldboot_ac3]
+set ::QRCBASE [file join ${::CUSTOM_TEMPLAT_DIR} lines.qrc]
+set ::CUSTOM_DEV2_DIR [file join ${::CUSTOM_DEVFLASH_DIR} dev_flash]
+set ::CUSTOM_DEV_MODULE [file join ${::CUSTOM_DEV2_DIR} vsh module]
+set ::CUSTOM_MFW_DIR [file join ${::CUSTOM_DEV2_DIR} mfw]
+set ::C_PS3_GAME [file join ${::CUSTOM_TEMPLAT_DIR} PS3_GAMES]
+set ::C_PS3_GAME_AC1D [file join ${::C_PS3_GAME} ac1d]
+set ::C_PS3_GAME_ROG [file join ${::C_PS3_GAME} rog]
+set ::CUSTOM_PS3_GAME [file join ${::C_PS3_GAME_ROG} PS3_GAME]
+set ::CUSTOM_PS3_GAME2 [file join ${::C_PS3_GAME_AC1D} PS3_GAME]
+set ::DCINAVIA [file join ${::CUSTOM_TEMPLAT_DIR} videoplayer_plugin.sprx]
+set ::RCINAVIA [file join ${::CUSTOM_DEV_MODULE} videoplayer_plugin.sprx]
+
+# modification files
+set ::CUSTOM_UPL_XML [file join ${::CUSTOM_UPLXML_DIR} UPL.xml]
+
+# version info
+set ::PUP_BUILD ""
+set ::CUSTOM_BUILDVER_TXT [file join ${::PS3MFW_DIR} version.txt]
+set ::ToolBoxIPF_DIR [file join ${::PS3MFW_DIR} Toolbox PS3_GAME]
+
+#### ----------------------------------------------------------------------------- ####
+####		**** BEGIN THE MFW CREATION PROCESS ****				   			   ####
+#### ----------------------------------------------------------------------------- ####
+
+if {$options(--gui)} {
+	package require Tk 8.5
+	foreach font [font names] {
+		font configure ${::font} -family Helvetica
+	}
+	if { [info proc console] == "" && [info command console] == "" } {
+		source [file join ${::PS3MFW_DIR} console.tcl]
+		console hide
+	}
+	if {$::options(--debug)} {
+		console show
+	}
+	if {$::options(--no-sha1-check)} {
+	    set ::SHCHK "false"
+	}
+	#if {$::options(--add-sha1)} {
+	#    set ::SHADD "true"
+	#}
+
+	source [file join ${::PS3MFW_DIR} ps3mfw_gui.tcl]
+	source [file join ${::PS3MFW_DIR} scrolledframe.tcl]
+	source [file join ${::PS3MFW_DIR} tracedtext.tcl]
+	::gui::create_gui ${::arguments} ${::tasks}
+} else {
+	if {[llength ${::arguments}] != 2} {
+		# exits
+		usage
+	}
+
+	set ::IN_FILE [lindex ${::arguments} 0]
+	set ::OUT_FILE [lindex ${::arguments} 1]	
+
+	build_mfw ${::IN_FILE} ${::OUT_FILE} ${::tasks}
+	exit
+}
+
+#### ----------------------------------------------------------------------------- ####
+####		**** MFW CREATION PROCESS COMPLETE!!! ****				   			   ####
+#### ----------------------------------------------------------------------------- ####
