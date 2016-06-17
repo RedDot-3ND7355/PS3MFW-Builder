@@ -307,6 +307,8 @@ proc build_mfw {input output tasks} {
 		--COMPRESS ""
 	}
 	
+	set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "0"
+	
 	set ::selected_tasks [sort_tasks ${tasks}]
 	
     # print out ego info
@@ -401,7 +403,9 @@ proc build_mfw {input output tasks} {
 
 	# unpack the CORE_OS files here, pass the 
 	# SELF-SCE Headers array
-	::unpack_coreos_files2 ${::ORIGINAL_PUP_DIR} LV0_SCE_HDRS
+	# ::unpack_coreos_files2 ${::ORIGINAL_PUP_DIR} LV0_SCE_HDRS
+	# Remove the # to the ::unpack_ ... to re-enable pre-unpack of core os and lv0 ldr's!
+	debug "Skipped some useless task..."
 	
 	### DO THE COPY HERE, SO WE HAVE A MIRROR OF ALL REQ'D
 	### files in the 'PS3MFW-OFW' directory.
@@ -427,8 +431,21 @@ proc build_mfw {input output tasks} {
 	
 	#repack the CORE_OS files here, pass the 
 	# SELF-SCE Headers array
-	::repack_coreos_files2 LV0_SCE_HDRS
-
+	# ::repack_coreos_files2 LV0_SCE_HDRS
+	# Remove the # to the ::repack_coreos_... to re-enable the bs useless task whatever... do what you want ffs.
+	set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "0"
+	foreach task ${::selected_tasks} {
+		if {${::selected_tasks} == "patch_lv0"} {
+		set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "1"
+			debug "Preparing repacking of lv0 loaders!"
+			::repack_coreos_files2 LV0_SCE_HDRS
+		}
+	}
+	if {${::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK} == "0"} {
+		debug "Skipped the packing of core os and so on... (already packed)"
+	}
+	
+	
     # RECREATE PS3UPDAT.PUP
     file delete -force ${::CUSTOM_DEVFLASH_DIR}
 	debug "Custom dev_flash deleted"
