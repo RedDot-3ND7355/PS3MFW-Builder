@@ -107,7 +107,7 @@ namespace eval ::patch_AAA {
 	} else {
 		die "Getting pup version FAILED! Exiting!"
 	}
-	
+		if {$::NEWMFW_VER != "4.80"} {
 	    if {$::patch_AAA::options(--patch-ingamescreenshot-features)} {
 			log "Patching Screenshot Option"
 			log "Part 1"
@@ -120,7 +120,12 @@ namespace eval ::patch_AAA {
             catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
         log "Done vsh.self patches for screenshots"
 		}
-	
+		} else { 
+		log "Doing Patches for screenshots"
+		log "Error, scanning if offsets are patched..."
+		log "..."
+		log "Already patched"
+		}
         if {$::patch_AAA::options(--allow-unsigned-app-4xx) } {
 		if {$::NEWMFW_VER == "4.40" || $::NEWMFW_VER == "4.41" || $::NEWMFW_VER == "4.42" || $::NEWMFW_VER == "4.43" || $::NEWMFW_VER == "4.44" || $::NEWMFW_VER == "4.45" || $::NEWMFW_VER == "4.46"} {
 
@@ -142,7 +147,7 @@ namespace eval ::patch_AAA {
             catch_die {::patch_elf $elf $search 20 $replace} "Unable to patch self [file tail $elf]"
         }
 		
-	if {$::NEWMFW_VER == "4.50" || $::NEWMFW_VER == "4.51" || $::NEWMFW_VER == "4.52" || $::NEWMFW_VER == "4.53" || $::NEWMFW_VER == "4.54" || $::NEWMFW_VER == "4.55" || $::NEWMFW_VER == "4.56" || $::NEWMFW_VER == "4.57" || $::NEWMFW_VER == "4.58" || $::NEWMFW_VER == "4.59"} {
+			if {$::NEWMFW_VER == "4.50" || $::NEWMFW_VER == "4.51" || $::NEWMFW_VER == "4.52" || $::NEWMFW_VER == "4.53" || $::NEWMFW_VER == "4.54" || $::NEWMFW_VER == "4.55" || $::NEWMFW_VER == "4.56" || $::NEWMFW_VER == "4.57" || $::NEWMFW_VER == "4.58" || $::NEWMFW_VER == "4.59"} {
             log "Patching [file tail $elf] to allow running of unsigned applications!"
 			log "Part 1 --  4.50"
 			
@@ -201,9 +206,84 @@ namespace eval ::patch_AAA {
 			
 			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
 			}
+			
 		}
 		
+		
 		if {$::patch_AAA::options(--reactpsn-online-offline) } {
+		if  {$::NEWMFW_VER == "4.80" || $::NEWMFW_VER == "4.78"} {
+			log "Patching [file tail $elf] for ReactPSN ONLINE/OFFLINE, run apps unsigned & more!"
+			log "Updated patterns for 4.80"
+			log "Part 1"
+		
+			set search "\x39\x29\x00\x04\x7C\x00\x48\x28\x7C\x09\xFE\x70\x7D\x23\x02\x78"
+			set replace "\x39\x29\x00\x04\x38\x00\x00\x01\x7C\x09\xFE\x70\x7D\x23\x02\x78"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 2"
+			
+			set search "\x7C\x00\x48\x28\x2F\x80\x00\x00\x38\x60\xD8\xF3\x41\x9E\x06\xF0"
+			set replace "\x38\x00\x00\x01\x2F\x80\x00\x00\x38\x60\xD8\xF3\x41\x9E\x06\xF0"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 3"
+			
+			set search "\x48\x00\x53\x31\x6F\xA0\x80\x01\x2F\x80\x05\x14\x41\x9E\x03\x54"
+			set replace "\x60\x00\x00\x00\x6F\xA0\x80\x01\x2F\x80\x05\x14\x41\x9E\x03\x54"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 4"
+			
+			set search "\x7C\x7F\x1B\x78\x41\x9E\xFF\x10\xE8\x01\x02\x10\x7F\xE3\x07\xB4"
+			set replace "\x7C\x7F\x1B\x78\x41\x9E\xFF\x10\xE8\x01\x02\x10\x38\x60\x00\x00"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 5"
+			
+			set search "\x40\x9D\x00\x08\x39\x60\x00\x00\x3D\x20\x00\x72\x99\x69\x55\xD0"
+			set replace "\x40\x9D\x00\x08\x60\x00\x00\x00\x3D\x20\x00\x72\x99\x69\x55\xD0"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 6"
+			
+			set search "\xF8\x21\xFF\x91\x7C\x08\x02\xA6\xF8\x01\x00\x80\x4B\xDB\xA4\x09"
+			set replace "\xF8\x21\xFF\x91\x7C\x08\x02\xA6\xF8\x01\x00\x80\x38\x60\x00\x00"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 7"
+			
+			set search "\x60\x63\x8C\x06\x4B\xFF\xFF\xA8\xF8\x21\xFF\x81\x7C\x08\x02\xA6"
+			set replace "\x60\x63\x8C\x06\x4B\xFF\xFF\xA8\x38\x60\x00\x01\x4E\x80\x00\x20"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 8"
+			
+			set search     "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+			append search  "\x00\x00\x00\x24\x13\xBC\xC5\xF6\x00\x33\x00\x00\x00\x48\x00\x00"
+			append search  "\x00\x00\x03\x84\x00\x00\x90\x00\x00\x01\x00\x00\x00\x00\x00\x00"
+			set replace    "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+			append replace "\x00\x00\x00\x24\x13\xBC\xC5\xF6\x00\x33\x00\x00\x00\x34\x00\x00"
+			append repalce "\x00\x00\x03\x84\x00\x00\x90\x00\x00\x01\x00\x00\x00\x00\x00\x00"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			
+			log "Part 9"
+			
+			set search "\x00\x6C\x02\xBC\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00"
+			append search "\x00\x00\x00\x02\x00\x00\x00\x01\x02\x01\x01\x01\xFF\xFF\xFF\xFF"
+			set replace "\x00\x6C\x02\xBC\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00"
+			append replace "\x00\x00\x00\x02\x00\x00\x00\x01\x02\x00\x01\x01\xFF\xFF\xFF\xFF"
+			
+			catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
+			}
+		
 		if {$::NEWMFW_VER == "4.65"} {
             log "Patching [file tail $elf] for ReactPSN ONLINE/OFFLINE"
 			log "Updated pattern for 4.65"

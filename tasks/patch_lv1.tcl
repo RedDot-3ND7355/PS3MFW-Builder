@@ -552,8 +552,8 @@ log "good grief, finally done patching!"
             catch_die {::patch_elf $elf $search 0 $replace} "Unable to patch self [file tail $elf]"
 	}
 	
-    if {$::NEWMFW_VER == "4.60" || $::NEWMFW_VER == "4.61" || $::NEWMFW_VER == "4.62" || $::NEWMFW_VER == "4.63" || $::NEWMFW_VER == "4.64" || $::NEWMFW_VER == "4.65" || $::NEWMFW_VER == "4.66" || $::NEWMFW_VER == "4.67" || $::NEWMFW_VER == "4.68" || $::NEWMFW_VER == "4.70" || $::NEWMFW_VER == "4.75" || $::NEWMFW_VER == "4.76" || $::NEWMFW_VER == "4.78"} {
-	  log "Patch core OS Hash check core os for 4.6x & 4.7x"
+    if {$::NEWMFW_VER == "4.60" || $::NEWMFW_VER == "4.61" || $::NEWMFW_VER == "4.62" || $::NEWMFW_VER == "4.63" || $::NEWMFW_VER == "4.64" || $::NEWMFW_VER == "4.65" || $::NEWMFW_VER == "4.66" || $::NEWMFW_VER == "4.67" || $::NEWMFW_VER == "4.68" || $::NEWMFW_VER == "4.70" || $::NEWMFW_VER == "4.75" || $::NEWMFW_VER == "4.76" || $::NEWMFW_VER == "4.78" || $::NEWMFW_VER == "4.80"} {
+	  log "Patch core OS Hash check core os for 4.6x, 4.7x & 4.8x"
       log "Added by RedDot-3ND7355"
 
       set search  "\x41\x9E\x00\x1C\x7F\x63\xDB\x78\xE8\xA2\x85\x78"
@@ -565,7 +565,7 @@ log "good grief, finally done patching!"
 	  log "Skipped an patched misc..."
 	  } else {
 	  # Patching LV1 to remove lv2 protect if the misc patches not on!
-            log "Patching LV1 hypervisior to remove LV2 protection for 4.6x & 4.7x"
+            log "Patching LV1 hypervisior to remove LV2 protection for 4.6x, 4.7x & 4.8x"
 			log "Added by RedDot ;)"
             
             set search  "\x48\x00\xE0\x95\x2F\x83\x00\x00\x38\x60\x00\x01\x41\x9e"
@@ -575,7 +575,7 @@ log "good grief, finally done patching!"
 		}
 	  
 	  # Patching lv1 peek&poke OMG!
-            log "Patching LV1 hypervisor to add peek/poke support for 4.6x & 4.7x"
+            log "Patching LV1 hypervisor to add peek/poke support for 4.6x, 4.7x & 4.8x"
 			log "Added by RedDot-3ND7355"
 			
             set search     "\x64\x00\xFF\xFF\x60\x00\xFF\xEC\xF8\x03\x00\xC0\x4E\x80\x00\x20\x38\x00\x00"

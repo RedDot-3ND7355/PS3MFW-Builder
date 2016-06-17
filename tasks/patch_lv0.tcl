@@ -39,17 +39,32 @@
 
 namespace eval ::patch_lv0 {
 
+	global options	
+	 # array for saving off SELF-SCE Hdr fields
+	 # for "LV0" for use by unself/makeself routines
+	array set LV0_SCE_HDRS {
+		--KEYREV ""
+		--AUTHID ""
+		--VENDORID ""
+		--SELFTYPE ""
+		--APPVERSION ""
+		--FWVERSION ""
+		--CTRLFLAGS ""
+		--CAPABFLAGS ""
+		--COMPRESS ""
+	}
+
     array set ::patch_lv0::options {
 	    --label ""
 		--no-lv1crypt false
 		--no-lv1cryptim false
 		--no-lv1cryptex true
 	    --patch-lv0-nodescramble-lv1ldr false
-		--patch_lv0-my-way false
+		--patch_lv0-my-way true
         --patch_lv0-my-way3	false
 		--patch_lv0-my-way4 false
 		--patch_lv0-my-way5 false
-		--patch_lv0-my-way6 true
+		--patch_lv0-my-way6 false
     }
 
     proc main { } {
@@ -64,7 +79,9 @@ namespace eval ::patch_lv0 {
 		if { ${::OLDROUTINE} == "1" } {
 		::unpack_coreos_files
         } elseif { ${::OLDROUTINE} == "0" } {
-		debug "Skipping unpacking coreos, allready done"
+		#debug "Skipping unpacking coreos, allready done
+		debug "trying an alternative"
+		::unpack_coreos_files2 ${::CUSTOM_PUP_DIR} LV0_SCE_HDRS
 		}
 		::patch_lv0::Patch_Lv0_Nigga $path
 	}
@@ -775,6 +792,7 @@ namespace eval ::patch_lv0 {
 		set ::FLAG_NO_LV1LDR_CRYPT "YES"
 		catch_die {::import_lv0 $::CUSTOM_COSUNPKG_DIR "lv0"} "ERROR: Could not import LV0"
 	    ::repack_coreos_files
+		set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "0"
 		}
 		} elseif { ${::OLDROUTINE} == "0" } {
 		if {$::patch_lv0::options(--no-lv1crypt)} {
@@ -784,5 +802,7 @@ namespace eval ::patch_lv0 {
 		} else {
 		set ::FLAG_NO_LV1LDR_CRYPT "YES"
 	    }
-	}
+		#::repack_coreos_files2 LV0_SCE_HDRS
+	    set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "1"
+		}
 }
