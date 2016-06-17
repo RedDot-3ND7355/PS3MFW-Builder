@@ -9,6 +9,16 @@
 \==============================================================/
 
 /-----------------------------------\
+|Build:0.3.1.0 Tasks, Fix & clean-up|
+\-----------------------------------/
+
+Fixed some tasks that were not executing properly when needed.
+
+Removed some tasks that were useless and rendered some pup's not installable (ofw)
+
+Added support for latest fw's :)
+
+/-----------------------------------\
 |Build:0.3.0.0 Tasks, Fix & clean-up|
 \-----------------------------------/
 
