@@ -79,9 +79,9 @@ namespace eval ::patch_lv0 {
 		if { ${::OLDROUTINE} == "1" } {
 		::unpack_coreos_files
         } elseif { ${::OLDROUTINE} == "0" } {
-		#debug "Skipping unpacking coreos, allready done
-		debug "trying an alternative"
-		::unpack_coreos_files2 ${::CUSTOM_PUP_DIR} LV0_SCE_HDRS
+		debug "Skipping unpacking coreos, already done"
+		#debug "trying an alternative"
+		#::unpack_coreos_files2 ${::CUSTOM_PUP_DIR} LV0_SCE_HDRS
 		}
 		::patch_lv0::Patch_Lv0_Nigga $path
 	}
@@ -94,9 +94,9 @@ namespace eval ::patch_lv0 {
 	proc patch_self { self } {
             ::modify_lv0_file $self patch_lv0::patch_elf
         }
-
+	
 	proc Patch_Lv0_Nigga {path} {
-		
+	
 		if {$::patch_lv0::options(--no-lv1crypt)} {
 		set --no-lv1cryptim false
 		set --no-lv1cryptex false
@@ -792,7 +792,7 @@ namespace eval ::patch_lv0 {
 		set ::FLAG_NO_LV1LDR_CRYPT "YES"
 		catch_die {::import_lv0 $::CUSTOM_COSUNPKG_DIR "lv0"} "ERROR: Could not import LV0"
 	    ::repack_coreos_files
-		set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "0"
+		#set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "0"
 		}
 		} elseif { ${::OLDROUTINE} == "0" } {
 		if {$::patch_lv0::options(--no-lv1crypt)} {
@@ -802,7 +802,5 @@ namespace eval ::patch_lv0 {
 		} else {
 		set ::FLAG_NO_LV1LDR_CRYPT "YES"
 	    }
-		#::repack_coreos_files2 LV0_SCE_HDRS
-	    set ::DID_PATCHING_WITH_UNPACKING_WITHIN_TASK "1"
-		}
+	}
 }

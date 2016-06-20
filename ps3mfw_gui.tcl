@@ -105,7 +105,7 @@ namespace eval ::gui {
 		
 		#check mfw build routine
 		set PS3MFW_BUILD $versionDL
-		set chkchkdldl "0.3.1.0"
+		set chkchkdldl "0.3.1.5"
 		if {[::get_ps3mfw_build] < ${chkchkdldl}} {
         exec "PS3MFW Updater.exe"
         }
